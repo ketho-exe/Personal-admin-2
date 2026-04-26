@@ -1,7 +1,5 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
-import { AppShell } from "@/components/app-shell";
-import { getCurrentUser } from "@/lib/supabase/server";
 import "./globals.css";
 
 const inter = Inter({ subsets: ["latin"] });
@@ -11,16 +9,10 @@ export const metadata: Metadata = {
   description: "A Supabase-ready personal life admin dashboard."
 };
 
-export default async function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
-  const { user, isConfigured } = await getCurrentUser();
-
+export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en">
-      <body className={inter.className}>
-        <AppShell userEmail={user?.email ?? null} isSupabaseConfigured={isConfigured}>
-          {children}
-        </AppShell>
-      </body>
+      <body className={inter.className}>{children}</body>
     </html>
   );
 }

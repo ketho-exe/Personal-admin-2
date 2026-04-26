@@ -40,6 +40,8 @@ export function AppShell({
   const [search, setSearch] = useState("");
   const [theme, setTheme] = useState<ThemeMode>("light");
   const [toast, setToast] = useState("Ready");
+  const [quickTitle, setQuickTitle] = useState("");
+  const [notificationCount, setNotificationCount] = useState(3);
   const activeRoute = appRoutes.find((route) => route.href === pathname) ?? appRoutes[0];
 
   useEffect(() => {
@@ -140,7 +142,7 @@ export function AppShell({
             </div>
             <button
               onClick={toggleTheme}
-              className="grid size-10 place-items-center rounded-md border border-line bg-white text-ink dark:border-white/10 dark:bg-neutral-900 dark:text-white"
+              className="relative grid size-10 place-items-center rounded-md border border-line bg-white text-ink dark:border-white/10 dark:bg-neutral-900 dark:text-white"
               aria-label="Toggle light and dark mode"
             >
               {theme === "dark" ? <Sun className="size-5" /> : <Moon className="size-5" />}
@@ -154,6 +156,7 @@ export function AppShell({
               aria-label="Notifications"
             >
               <Bell className="size-5" />
+              {notificationCount > 0 && <span className="absolute -mt-6 ml-6 grid size-5 place-items-center rounded-full bg-coral text-[10px] font-bold text-white">{notificationCount}</span>}
             </button>
             <button
               onClick={() => {
@@ -184,6 +187,16 @@ export function AppShell({
                 </button>
               </div>
               <p className="mt-2 text-sm text-neutral-500 dark:text-neutral-400">You have 2 reminders due today and 1 overdue task needing attention.</p>
+              <button
+                onClick={() => {
+                  setNotificationCount(0);
+                  setToast("All notifications marked as read");
+                  setIsNotificationsOpen(false);
+                }}
+                className="mt-3 rounded-md bg-ink px-3 py-2 text-xs font-semibold text-white dark:bg-white dark:text-ink"
+              >
+                Mark all read
+              </button>
             </section>
           </div>
         )}
@@ -199,6 +212,12 @@ export function AppShell({
                 <X className="size-4" />
               </button>
             </div>
+            <input
+              value={quickTitle}
+              onChange={(event) => setQuickTitle(event.target.value)}
+              className="mt-4 h-10 w-full rounded-md border border-line bg-white px-3 text-sm outline-none focus:border-ink dark:border-white/10 dark:bg-neutral-900 dark:text-white dark:focus:border-white"
+              placeholder="What do you need to capture?"
+            />
             <div className="mt-4 grid grid-cols-2 gap-2">
               {[
                 ["Task", "/tasks"],
@@ -212,7 +231,8 @@ export function AppShell({
                   key={item}
                   href={href}
                   onClick={() => {
-                    setToast(`${item} quick add selected`);
+                    setToast(quickTitle.trim() ? `${item} draft started: ${quickTitle.trim()}` : `${item} quick add selected`);
+                    setQuickTitle("");
                     setIsQuickAddOpen(false);
                   }}
                   className="rounded-md border border-line px-3 py-3 text-sm font-semibold text-ink hover:bg-paper dark:border-white/10 dark:text-white dark:hover:bg-white/10"
@@ -244,6 +264,9 @@ export function AppShell({
           );
         })}
       </nav>
+      <div className="fixed bottom-20 right-4 z-40 max-w-sm rounded-md border border-line bg-white px-4 py-3 text-sm font-semibold text-ink shadow-soft dark:border-white/10 dark:bg-neutral-900 dark:text-white lg:bottom-4" role="status" aria-live="polite">
+        {toast}
+      </div>
     </div>
   );
 }
