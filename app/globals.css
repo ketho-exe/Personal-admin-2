@@ -1,5 +1,7 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 @theme {
   --color-ink: #202124;
   --color-paper: #f7f5ef;
@@ -17,6 +19,12 @@
   color: #202124;
 }
 
+:root.dark {
+  color-scheme: dark;
+  background: #151614;
+  color: #f4f1e9;
+}
+
 * {
   box-sizing: border-box;
 }
@@ -27,6 +35,12 @@ body {
   background:
     linear-gradient(180deg, rgba(255, 255, 255, 0.72), rgba(247, 245, 239, 0.9)),
     #f7f5ef;
+}
+
+.dark body {
+  background:
+    linear-gradient(180deg, rgba(21, 22, 20, 0.96), rgba(33, 35, 32, 0.94)),
+    #151614;
 }
 
 button,
