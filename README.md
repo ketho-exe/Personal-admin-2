@@ -29,6 +29,7 @@ cp .env.example .env.local
 ```bash
 NEXT_PUBLIC_SUPABASE_URL=
 NEXT_PUBLIC_SUPABASE_ANON_KEY=
+NEXT_PUBLIC_SITE_URL=http://localhost:3000
 ```
 
 4. Run the app:

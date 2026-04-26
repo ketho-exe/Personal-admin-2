@@ -1,9 +1,10 @@
 "use client";
 
-import { Bell, CalendarDays, Check, FileText, Home, ListChecks, Menu, Moon, Plus, Search, Settings, Sun, Tags, Users, X } from "lucide-react";
+import { Bell, CalendarDays, Check, FileText, Home, ListChecks, LogIn, LogOut, Menu, Moon, Plus, Search, Settings, Sun, Tags, Users, X } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState, type ReactNode } from "react";
+import { signOut } from "@/app/auth/actions";
 import { getNextTheme, type ThemeMode } from "@/lib/interactions";
 import { appRoutes } from "@/lib/navigation";
 import { cn } from "@/lib/utils";
@@ -22,7 +23,15 @@ const icons = {
   Settings: Settings
 };
 
-export function AppShell({ children }: { children: ReactNode }) {
+export function AppShell({
+  children,
+  userEmail,
+  isSupabaseConfigured
+}: {
+  children: ReactNode;
+  userEmail: string | null;
+  isSupabaseConfigured: boolean;
+}) {
   const pathname = usePathname();
   const router = useRouter();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -65,7 +74,7 @@ export function AppShell({ children }: { children: ReactNode }) {
           <div className="grid size-10 place-items-center rounded-md bg-ink text-sm font-semibold text-white">PA</div>
           <div>
             <p className="text-sm font-semibold text-ink dark:text-white">Personal Admin</p>
-            <p className="text-xs text-neutral-500 dark:text-neutral-400">Life OS dashboard</p>
+            <p className="text-xs text-neutral-500 dark:text-neutral-400">{userEmail ?? (isSupabaseConfigured ? "Signed out" : "Supabase not configured")}</p>
           </div>
         </div>
         <nav className="space-y-1">
@@ -87,6 +96,21 @@ export function AppShell({ children }: { children: ReactNode }) {
             );
           })}
         </nav>
+        <div className="mt-6 border-t border-line pt-4 dark:border-white/10">
+          {userEmail ? (
+            <form action={signOut}>
+              <button className="flex h-10 w-full items-center gap-3 rounded-md px-3 text-sm font-semibold text-coral transition hover:bg-coral/10">
+                <LogOut className="size-4" />
+                Sign out
+              </button>
+            </form>
+          ) : (
+            <Link href="/auth" className="flex h-10 w-full items-center gap-3 rounded-md px-3 text-sm font-semibold text-ink transition hover:bg-neutral-100 dark:text-white dark:hover:bg-white/10">
+              <LogIn className="size-4" />
+              Sign in
+            </Link>
+          )}
+        </div>
       </aside>
 
       <div className="lg:pl-72">
