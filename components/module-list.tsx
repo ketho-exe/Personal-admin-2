@@ -1,6 +1,7 @@
 "use client";
 
 import { Archive, Bell, Contact, FileText, ListChecks, NotebookText, SlidersHorizontal } from "lucide-react";
+import Link from "next/link";
 import { useState } from "react";
 
 const icons = {
@@ -17,6 +18,15 @@ const tones = {
   sky: "bg-skysoft/12 text-skysoft",
   plum: "bg-plum/12 text-plum",
   coral: "bg-coral/12 text-coral"
+};
+
+const hrefs = {
+  Tasks: "/tasks",
+  Reminders: "/reminders",
+  Documents: "/documents",
+  Notes: "/notes",
+  Contacts: "/contacts",
+  Records: "/records"
 };
 
 export function ModuleList({
@@ -48,8 +58,9 @@ export function ModuleList({
         {modules.map((module) => {
           const Icon = icons[module.name];
           return (
-            <button
+            <Link
               key={module.name}
+              href={hrefs[module.name]}
               onClick={() => setSelectedModule(module.name)}
               className="rounded-md border border-line bg-white p-4 text-left shadow-soft transition hover:-translate-y-0.5 hover:border-ink dark:border-white/10 dark:bg-neutral-900 dark:hover:border-white"
             >
@@ -62,7 +73,7 @@ export function ModuleList({
               <h3 className="text-base font-semibold text-ink dark:text-white">{module.name}</h3>
               <p className="mt-1 text-sm leading-6 text-neutral-500 dark:text-neutral-400">{module.description}</p>
               {selectedModule === module.name && <p className="mt-3 text-xs font-semibold text-sage">Selected</p>}
-            </button>
+            </Link>
           );
         })}
       </div>

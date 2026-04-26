@@ -77,6 +77,53 @@ export const sampleItems: AdminItem[] = [
     category: "Vehicle",
     tags: ["record", "renewal"],
     updatedAt: "2026-04-20T11:40:00Z"
+  },
+  {
+    id: "event-dentist",
+    type: "event",
+    title: "Dentist appointment",
+    description: "Calendar appointment with travel time and reminder.",
+    status: "open",
+    dueDate: "2026-05-03",
+    priority: "medium",
+    category: "Health",
+    tags: ["calendar", "appointment"],
+    updatedAt: "2026-04-19T09:15:00Z"
+  },
+  {
+    id: "document-passport",
+    type: "document",
+    title: "Passport scan",
+    description: "Identity document stored in private Supabase Storage.",
+    status: "open",
+    dueDate: "2026-05-22",
+    expiresAt: "2026-05-22",
+    priority: "urgent",
+    category: "Identity",
+    tags: ["document", "expiry"],
+    updatedAt: "2026-04-18T14:05:00Z"
+  },
+  {
+    id: "note-application",
+    type: "note",
+    title: "Application follow-up template",
+    description: "Reusable wording for chasing applications and reference numbers.",
+    status: "open",
+    priority: "low",
+    category: "Templates",
+    tags: ["template", "admin"],
+    updatedAt: "2026-04-17T16:25:00Z"
+  },
+  {
+    id: "contact-gp",
+    type: "contact",
+    title: "GP surgery",
+    description: "Reception number, online portal, and referral notes.",
+    status: "open",
+    priority: "high",
+    category: "Health",
+    tags: ["healthcare", "phone"],
+    updatedAt: "2026-04-16T10:10:00Z"
   }
 ];
 

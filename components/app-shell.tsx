@@ -1,29 +1,37 @@
 "use client";
 
 import { Bell, CalendarDays, Check, FileText, Home, ListChecks, Menu, Moon, Plus, Search, Settings, Sun, Tags, Users, X } from "lucide-react";
+import Link from "next/link";
+import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState, type ReactNode } from "react";
 import { getNextTheme, type ThemeMode } from "@/lib/interactions";
+import { appRoutes } from "@/lib/navigation";
 import { cn } from "@/lib/utils";
 
-const navigation = [
-  { name: "Dashboard", icon: Home },
-  { name: "Tasks", icon: ListChecks },
-  { name: "Reminders", icon: Bell },
-  { name: "Calendar", icon: CalendarDays },
-  { name: "Documents", icon: FileText },
-  { name: "Contacts", icon: Users },
-  { name: "Tags", icon: Tags },
-  { name: "Settings", icon: Settings }
-];
+const icons = {
+  Dashboard: Home,
+  Tasks: ListChecks,
+  Reminders: Bell,
+  Calendar: CalendarDays,
+  Documents: FileText,
+  Notes: FileText,
+  Contacts: Users,
+  Records: FileText,
+  Search: Search,
+  Tags: Tags,
+  Settings: Settings
+};
 
 export function AppShell({ children }: { children: ReactNode }) {
-  const [activeSection, setActiveSection] = useState("Dashboard");
+  const pathname = usePathname();
+  const router = useRouter();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
   const [isQuickAddOpen, setIsQuickAddOpen] = useState(false);
   const [search, setSearch] = useState("");
   const [theme, setTheme] = useState<ThemeMode>("light");
   const [toast, setToast] = useState("Ready");
+  const activeRoute = appRoutes.find((route) => route.href === pathname) ?? appRoutes[0];
 
   useEffect(() => {
     const storedTheme = window.localStorage.getItem("theme") as ThemeMode | null;
@@ -33,7 +41,6 @@ export function AppShell({ children }: { children: ReactNode }) {
   }, []);
 
   function chooseSection(section: string) {
-    setActiveSection(section);
     setIsMenuOpen(false);
     setToast(`${section} selected`);
   }
@@ -62,19 +69,23 @@ export function AppShell({ children }: { children: ReactNode }) {
           </div>
         </div>
         <nav className="space-y-1">
-          {navigation.map((item) => (
-            <button
+          {appRoutes.map((item) => {
+            const Icon = icons[item.name as keyof typeof icons];
+            return (
+            <Link
               key={item.name}
+              href={item.href}
               onClick={() => chooseSection(item.name)}
               className={cn(
                 "flex h-10 w-full items-center gap-3 rounded-md px-3 text-left text-sm font-medium text-neutral-600 transition hover:bg-neutral-100 hover:text-ink dark:text-neutral-300 dark:hover:bg-white/10 dark:hover:text-white",
-                activeSection === item.name && "bg-ink text-white hover:bg-ink hover:text-white dark:bg-white dark:text-ink"
+                pathname === item.href && "bg-ink text-white hover:bg-ink hover:text-white dark:bg-white dark:text-ink"
               )}
             >
-              <item.icon className="size-4" aria-hidden="true" />
+              <Icon className="size-4" aria-hidden="true" />
               {item.name}
-            </button>
-          ))}
+            </Link>
+            );
+          })}
         </nav>
       </aside>
 
@@ -95,6 +106,9 @@ export function AppShell({ children }: { children: ReactNode }) {
                 onChange={(event) => {
                   setSearch(event.target.value);
                   setToast(event.target.value ? `Searching for "${event.target.value}"` : "Search cleared");
+                  if (event.target.value.trim() && pathname !== "/search") {
+                    router.push(`/search?q=${encodeURIComponent(event.target.value.trim())}`);
+                  }
                 }}
                 className="h-10 w-full rounded-md border border-line bg-white pl-9 pr-3 text-sm outline-none transition placeholder:text-neutral-400 focus:border-ink dark:border-white/10 dark:bg-neutral-900 dark:text-white dark:focus:border-white"
                 placeholder="Search tasks, documents, notes, contacts..."
@@ -132,7 +146,7 @@ export function AppShell({ children }: { children: ReactNode }) {
             <div className="mx-auto flex max-w-7xl items-center gap-2">
               <Check className="size-3.5 text-sage" />
               <span>{toast}</span>
-              {activeSection !== "Dashboard" && <span className="hidden sm:inline">· Showing {activeSection} context</span>}
+              {activeRoute.name !== "Dashboard" && <span className="hidden sm:inline">- Showing {activeRoute.name} page</span>}
             </div>
           </div>
         </header>
@@ -162,9 +176,17 @@ export function AppShell({ children }: { children: ReactNode }) {
               </button>
             </div>
             <div className="mt-4 grid grid-cols-2 gap-2">
-              {["Task", "Reminder", "Note", "Document", "Contact", "Record"].map((item) => (
-                <button
+              {[
+                ["Task", "/tasks"],
+                ["Reminder", "/reminders"],
+                ["Note", "/notes"],
+                ["Document", "/documents"],
+                ["Contact", "/contacts"],
+                ["Record", "/records"]
+              ].map(([item, href]) => (
+                <Link
                   key={item}
+                  href={href}
                   onClick={() => {
                     setToast(`${item} quick add selected`);
                     setIsQuickAddOpen(false);
@@ -172,7 +194,7 @@ export function AppShell({ children }: { children: ReactNode }) {
                   className="rounded-md border border-line px-3 py-3 text-sm font-semibold text-ink hover:bg-paper dark:border-white/10 dark:text-white dark:hover:bg-white/10"
                 >
                   {item}
-                </button>
+                </Link>
               ))}
             </div>
           </section>
@@ -180,19 +202,23 @@ export function AppShell({ children }: { children: ReactNode }) {
       )}
 
       <nav className="fixed inset-x-0 bottom-0 z-30 grid grid-cols-5 border-t border-line bg-white/94 px-2 py-2 backdrop-blur dark:border-white/10 dark:bg-neutral-950/94 lg:hidden">
-        {navigation.slice(0, 5).map((item) => (
-          <button
+        {appRoutes.slice(0, 5).map((item) => {
+          const Icon = icons[item.name as keyof typeof icons];
+          return (
+          <Link
             key={item.name}
+            href={item.href}
             onClick={() => chooseSection(item.name)}
             className={cn(
               "flex flex-col items-center gap-1 rounded-md py-1.5 text-[11px] font-medium text-neutral-600 dark:text-neutral-300",
-              activeSection === item.name && "text-ink dark:text-white"
+              pathname === item.href && "text-ink dark:text-white"
             )}
           >
-            <item.icon className="size-5" />
+            <Icon className="size-5" />
             {item.name === "Dashboard" ? "Home" : item.name}
-          </button>
-        ))}
+          </Link>
+          );
+        })}
       </nav>
     </div>
   );
