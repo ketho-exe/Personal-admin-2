@@ -1,6 +1,15 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+
+@theme {
+  --color-ink: #202124;
+  --color-paper: #f7f5ef;
+  --color-line: #dfddd4;
+  --color-sage: #7f9c8d;
+  --color-plum: #7b638d;
+  --color-skysoft: #7a99b8;
+  --color-coral: #c86f5e;
+  --shadow-soft: 0 18px 50px rgba(32, 33, 36, 0.08);
+}
 
 :root {
   color-scheme: light;
