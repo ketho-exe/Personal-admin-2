@@ -1,6 +1,7 @@
 -- DESTRUCTIVE SUPABASE REBUILD SCRIPT
--- This script deletes the existing application data model in public, recreates it,
--- resets the app document storage bucket metadata, and replaces related policies.
+-- This script deletes and recreates the existing application data model in public.
+-- Supabase blocks direct deletion from storage.objects and storage.buckets, so
+-- existing stored files must be removed through the Supabase Storage API or UI.
 -- Run only against a project you are prepared to wipe.
 
 begin;
@@ -402,9 +403,6 @@ drop policy if exists "Workspace members can upload document files" on storage.o
 drop policy if exists "Workspace members can update document files" on storage.objects;
 drop policy if exists "Workspace members can delete document files" on storage.objects;
 
-delete from storage.objects where bucket_id = 'documents';
-delete from storage.buckets where id = 'documents';
-
 insert into storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
 values (
   'documents',
@@ -419,7 +417,11 @@ values (
     'text/plain',
     'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
   ]
-);
+)
+on conflict (id) do update set
+  public = excluded.public,
+  file_size_limit = excluded.file_size_limit,
+  allowed_mime_types = excluded.allowed_mime_types;
 
 create policy "Workspace members can read document files"
 on storage.objects for select

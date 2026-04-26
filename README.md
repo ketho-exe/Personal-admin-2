@@ -45,7 +45,9 @@ Open the Supabase SQL editor and run:
 supabase/schema.sql
 ```
 
-The script is intentionally destructive. It drops and recreates the `public` schema, rebuilds the application tables, enables RLS, creates policies, and resets the private `documents` storage bucket.
+The script is intentionally destructive. It drops and recreates the `public` schema, rebuilds the application tables, enables RLS, creates policies, and upserts the private `documents` storage bucket configuration.
+
+Supabase does not allow SQL queries to directly delete rows from `storage.objects` or `storage.buckets`. If you need to remove existing uploaded files, clear the bucket through the Supabase Storage UI or Storage API before running the schema.
 
 ## Verification
 
